@@ -3,10 +3,16 @@ require("dotenv").config();
 
 const cors = require('cors');
 const express = require("express");
-const db = require("./serv/database");
-const initRoutes = require("./src/routes/web");
-
 const app = express();
+const db = require("./serv/database");
+const db2 = require("./src/models");
+const initRoutes = require("./src/routes/web");
+app.use(express.urlencoded({ extended: true }));
+initRoutes(app);
+db2.sequelize.sync();
+global.__basedir = __dirname;
+
+
 
 const PORT = 3333;
 
