@@ -22,6 +22,7 @@ var corsOptions = {
 }
 
 app.use(cors(corsOptions));
+app.use(express.json());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -66,5 +67,14 @@ app.get("/api/new", (req, res) => {
         .then(data => res.json(data))
         .catch(err => res.status(500).json(err));
 });
+
+
+app.post('/api/register', (req,res,next) => {
+    console.log(req.body);
+    db.AddUser(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+});
+
 
 app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));

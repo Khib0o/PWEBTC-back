@@ -7,10 +7,10 @@ const File = fapi.File;
 // Prepare to connect to MySQL with your secret environment variables
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: process.env.MYSQL,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DB,
+    host: "localhost",
+    user: "root",
+    password: "ynot6803",
+    database: "dropbox"
 });
 
 function getAllFiles(limit = 100) {
@@ -55,9 +55,23 @@ function AddFile(limit = 100) {
     });
 }
 
+
+function AddUser(req) {
+    return new Promise((resolve, reject) => {
+        var sql = `INSERT INTO users(token, IdUser, name, url, email)VALUES(?, ?, ?, ?, ?)`;
+        pool.query(sql, [req.body.token, req.body.id, req.body.name, req.body.url, req.body.email] ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+    });
+}
+
 // Export the functions so other modules/files can use them
 module.exports = {
     getAllFiles,
     getAllUsers,
-    AddFile
+    AddFile,
+    AddUser
 };
