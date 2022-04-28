@@ -58,7 +58,7 @@ function AddFile(limit = 100) {
 
 function AddUser(req) {
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO users(token, IdUser, name, url, email)VALUES(?, ?, ?, ?, ?)`;
+        var sql = `INSERT IGNORE INTO users(token, IdUser, name, url, email)VALUES(?, ?, ?, ?, ?)`;
         pool.query(sql, [req.body.token, req.body.id, req.body.name, req.body.url, req.body.email] ,function (err, results) {
             if (err) {
                 return reject(err);
