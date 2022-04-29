@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 function getAllFiles(limit = 100) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM files,users WHERE files.IdOwner = users.IdUser`;
+        const sql = `SELECT * FROM files,users WHERE files.IdOwner = users.id`;
         pool.query(sql, [limit], function (err, results, fields) {
             if (err) {
                 return reject(err);
@@ -58,8 +58,8 @@ function AddFile(limit = 100) {
 
 function AddUser(req) {
     return new Promise((resolve, reject) => {
-        var sql = `INSERT IGNORE INTO users(token, IdUser, name, url, email)VALUES(?, ?, ?, ?, ?)`;
-        pool.query(sql, [req.body.token, req.body.id, req.body.name, req.body.url, req.body.email] ,function (err, results) {
+        var sql = `INSERT INTO users(token, id, name, url, email)VALUES(?, ?, ?, ?, ?)`;
+        pool.query(sql, [req.body.token.slice(0,400), req.body.id, req.body.name, req.body.url, req.body.email] ,function (err, results) {
             if (err) {
                 return reject(err);
             }
@@ -70,11 +70,11 @@ function AddUser(req) {
 
 
 function getUserInfo(req) {
-    let token = req.headers.authorization;
-    console.log("Token reçu")
+    let token = req.headers.authorization.slice(0,400);
+    console.log("");
     console.log(token);
     return new Promise((resolve, reject) => {
-        var sql = `SELECT token, IdUser, name, url, email FROM users WHERE INSTR(token , '${token}')`;
+        var sql = `SELECT * FROM users WHERE token = '${token}' ` ;
         pool.query(sql ,function (err, results) {
             if (err) {
                 return reject(err);
