@@ -68,10 +68,31 @@ function AddUser(req) {
     });
 }
 
+
+function getUserInfo(req) {
+    let token = req.headers.authorization;
+    console.log("Token reçu")
+    console.log(token);
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT token, IdUser, name, url, email FROM users WHERE INSTR(token , '${token}')`;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log(results);
+            return resolve(results);
+        });
+    });
+}
+
+
+
+
 // Export the functions so other modules/files can use them
 module.exports = {
     getAllFiles,
     getAllUsers,
     AddFile,
-    AddUser
+    AddUser,
+    getUserInfo
 };

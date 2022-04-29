@@ -62,19 +62,26 @@ app.get("/api/users", (req, res) => {
 });
 
 //Add a file
-app.get("/api/new", (req, res) => {
+app.post("/api/upload", (req, res) => {
+    console.log(req.body);
     db.AddFile()
-        .then(data => res.json(data))
+        .then(data => res.status(200).json(data))
         .catch(err => res.status(500).json(err));
 });
 
 
 app.post('/api/register', (req,res,next) => {
-    console.log(req.body);
+    //console.log(req.body);
     db.AddUser(req)
         .then(data => res.status(200).json(data))
         .catch(err => res.status(500).json(err));
 });
+
+app.get('/api/getUser', (req,res,next) => {
+    db.getUserInfo(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+})
 
 
 app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));
