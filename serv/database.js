@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 function getAllFiles(limit = 100) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM files,users WHERE files.IdOwner = users.id`;
+        const sql = `SELECT * FROM files`;
         pool.query(sql, [limit], function (err, results, fields) {
             if (err) {
                 return reject(err);
