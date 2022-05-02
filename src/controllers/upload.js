@@ -3,7 +3,7 @@ const db = require("../models");
 const Image = db.images;
 const uploadFiles = async (req, res) => {
   try {
-    console.log(req.file);
+    console.log(req.body.file);
     if (req.file == undefined) {
       return res.send(`You must select a file.`);
     }
