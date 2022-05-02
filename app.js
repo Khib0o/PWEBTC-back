@@ -1,39 +1,37 @@
 // This loads the settings from your `.env` file.
 require("dotenv").config();
 
-const cors = require('cors');
+
 const express = require("express");
 const app = express();
 const db = require("./serv/database");
-const db2 = require("./src/models");
-const initRoutes = require("./src/routes/web");
+const PORT = 3000;
+
 app.use(express.urlencoded({ extended: true }));
-initRoutes(app);
-db2.sequelize.sync();
 global.__basedir = __dirname;
 
+const  multipart  =  require('connect-multiparty');
+const  multipartMiddleware  =  multipart({ uploadDir:  './uploads' });
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 
-const PORT = 3333;
 
-var corsOptions = {
-    origin: 'http://localhost:4200',
-    optionsSuccessStatus: 200 // For legacy browser support
-}
-
-app.use(cors(corsOptions));
-app.use(express.json());
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
-});
 
 ////////////
 // Routes //
 ////////////
+
+app.post('/api/upload', multipartMiddleware, (req, res) => {
+    res.json({
+        'message': 'File uploaded successfully'
+    });
+});
+
 
 // The home page lists some available URLs.
 app.get("/", (req, res) => {
@@ -59,15 +57,6 @@ app.get("/api/users", (req, res) => {
     db.getAllUsers()
         .then(data => res.json(data))
         .catch(err => res.status(500).json(err));
-});
-
-//Add a file
-app.post("/api/upload", (req, res) => {
-    console.log(req.body);
-    db.AddFile()
-        .then(data => res.status(200).json(data))
-        .catch(err => res.status(500).json(err));
-    
 });
 
 
