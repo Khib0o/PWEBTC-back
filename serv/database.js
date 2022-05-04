@@ -10,7 +10,7 @@ const pool = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "ynot6803",
-    database: "dropbox"
+    database: "pmanager"
 });
 
 function getAllFiles(limit = 100) {
@@ -58,13 +58,15 @@ function AddFile(limit = 100) {
 
 function AddUser(req) {
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO users(token, id, name, url, email)VALUES(?, ?, ?, ?, ?)`;
-        pool.query(sql, [req.body.token.slice(0,400), req.body.id, req.body.name, req.body.url, req.body.email] ,function (err, results) {
+        var sql = `INSERT INTO users (name, token, id, email, url)VALUES(?,? ,? ,? ,?)`;
+        
+        pool.query(sql, [req.body.name ,req.body.token.slice(0,400), req.body.id, req.body.email, req.body.url] ,function (err, results) {
             if (err) {
                 return reject(err);
             }
             return resolve(results);
         });
+        
     });
 }
 
