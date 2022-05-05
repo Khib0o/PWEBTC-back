@@ -76,10 +76,9 @@ function AddUser(req) {
 
 function insertPath(req){
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO images (image_name)VALUES(?)`;
-        console.log(req);
+        var sql = `INSERT INTO images (image_name, nom)VALUES(?, ?)`;
         console.log("insertion done");
-        pool.query(sql, [req.path] ,function (err, results) {
+        pool.query(sql, [req.path, req.body.name],function (err, results) {
             if (err) {
                 return reject(err);
             }
