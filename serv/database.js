@@ -58,7 +58,7 @@ function AddFile(limit = 100) {
 
 function AddUser(req) {
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO users (name, token, id, email, url)VALUES(?,? ,? ,? ,?)`;
+        var sql = `INSERT IGNORE INTO users (name, token, id, email, url)VALUES(?,? ,? ,? ,?)`;
         
         pool.query(sql, [req.body.name ,req.body.token.slice(0,400), req.body.id, req.body.email, req.body.url] ,function (err, results) {
             if (err) {
@@ -87,6 +87,23 @@ function getUserInfo(req) {
     });
 }
 
+function getProjetByUser(req) {
+    let token = req.headers.authorization.slice(0,400);
+    console.log(token);
+
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT projects.IdProjects, projects.Name, projects.Members, projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser HAVING (SELECT IdUser FROM users WHERE users.token = '${token}')` ;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log(results);
+            return resolve(results);
+        });
+    });
+
+}
+
 
 
 
@@ -96,5 +113,6 @@ module.exports = {
     getAllUsers,
     AddFile,
     AddUser,
-    getUserInfo
+    getUserInfo,
+    getProjetByUser
 };
