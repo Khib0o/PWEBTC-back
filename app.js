@@ -32,9 +32,10 @@ app.use((req, res, next) => {
 ////////////
 
 app.post('/api/upload', multipartMiddleware, (req, res) => {
-    res.json({
-        'message': 'File uploaded successfully'
-    });
+    console.log(req.body);
+    db.insertPath(req)
+    .then(data => res.json(data))
+    .catch(err => res.status(500).json(err));
 });
 
 

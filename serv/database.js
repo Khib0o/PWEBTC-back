@@ -9,9 +9,12 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "ynot6803",
+    password: "3151699a46",
     database: "pmanager"
 });
+
+
+
 
 function getAllFiles(limit = 100) {
     return new Promise((resolve, reject) => {
@@ -71,6 +74,21 @@ function AddUser(req) {
 }
 
 
+function insertPath(req){
+    return new Promise((resolve, reject) => {
+        var sql = `INSERT INTO images (path, name)VALUES(?, ?)`;
+        console.log("insertion done");
+        pool.query(sql, [req.path, req.body.name],function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
+}
+
+
 function getUserInfo(req) {
     let token = req.headers.authorization.slice(0,400);
     console.log("");
@@ -114,5 +132,7 @@ module.exports = {
     AddFile,
     AddUser,
     getUserInfo,
-    getProjetByUser
+    getProjetByUser,
+    insertPath,
+    pool
 };
