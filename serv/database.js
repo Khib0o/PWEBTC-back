@@ -9,7 +9,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "3151699a46",
+    password: "ynot6803",
     database: "pmanager"
 });
 
@@ -122,6 +122,35 @@ function getProjetByUser(req) {
 
 }
 
+function addUserToProject(req){
+    let email = req.body.email;
+    let IdProjects = req.body.IdProjects;
+    let IdUser = 0;
+
+    var sql = `SELECT IdUser FROM users WHERE email = '${email}' ` ;
+    pool.query(sql, function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        console.log(results);
+        IdUser = results;
+        console.log(IdUser)
+    });
+
+
+
+    return new Promise((resolve, reject) => {
+        var sql = `INSERT INTO associationproject (IdProjects, IdUser) VALUES(?, ?)`;
+        pool.query(sql, [IdProjects, IdUser],function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
+}
+
 
 
 
@@ -134,5 +163,6 @@ module.exports = {
     getUserInfo,
     getProjetByUser,
     insertPath,
+    addUserToProject,
     pool
 };
