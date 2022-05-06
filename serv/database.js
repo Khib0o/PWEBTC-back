@@ -110,7 +110,7 @@ function getProjetByUser(req) {
     console.log(token);
 
     return new Promise((resolve, reject) => {
-        var sql = `SELECT projects.IdProjects, projects.Name, projects.Members, projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser HAVING (SELECT IdUser FROM users WHERE users.token = '${token}')` ;
+        var sql = `SELECT projects.IdProjects, projects.Name, projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser HAVING (SELECT IdUser FROM users WHERE users.token = '${token}')` ;
         pool.query(sql ,function (err, results) {
             if (err) {
                 return reject(err);
@@ -138,6 +138,22 @@ function addUserToProject(req){
     });
 }
 
+function removeUserToProject(req) {
+    let email = req.body.email;
+    let IdProjects = req.body.IdProjects;
+
+    return new Promise((resolve, reject) => {
+        var sql = `DELETE FROM associationproject WHERE IdProjects = ${IdProjects} AND IdUser IN (SELECT IdUser FROM users WHERE users.email = '${email}')`;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
+}
+
 
 
 
@@ -151,5 +167,6 @@ module.exports = {
     getProjetByUser,
     insertPath,
     addUserToProject,
+    removeUserToProject,
     pool
 };
