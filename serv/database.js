@@ -154,6 +154,21 @@ function removeUserToProject(req) {
     });
 }
 
+function getMembersOfProject(req){
+    let IdProjects = req.body.IdProjects;
+
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT users.email FROM users, associationproject WHERE associationproject.IdProjects = ${IdProjects} AND users.IdUser = associationproject.IdUser `;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
+}
+
 
 
 
@@ -168,5 +183,6 @@ module.exports = {
     insertPath,
     addUserToProject,
     removeUserToProject,
+    getMembersOfProject,
     pool
 };

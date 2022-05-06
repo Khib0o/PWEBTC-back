@@ -103,4 +103,12 @@ app.post('/api/removeUserToProject', (req,res,next) => {
     
 })
 
+app.post('/api/getMembersOfProject', (req,res,next) => {
+    db.getMembersOfProject(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+})
+
+
+
 app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));
