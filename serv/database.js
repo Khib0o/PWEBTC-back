@@ -87,8 +87,33 @@ function getUserInfo(req) {
     });
 }
 
-
-
+function getUserInfo(req) {
+    let token = req.headers.authorization.slice(0,400);
+    console.log("");
+    console.log(token);
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT * FROM users WHERE token = '${token}' ` ;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log(results);
+            return resolve(results);
+        });
+    });
+}
+function DeleteFile(req) {
+    return new Promise((resolve, reject) => {
+        const sql = `Delete from files where IdFile = ${req.body.fileid}`;
+        console.log(sql);
+        pool.query(sql, function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+    });
+}
 
 // Export the functions so other modules/files can use them
 module.exports = {
@@ -96,5 +121,6 @@ module.exports = {
     getAllUsers,
     AddFile,
     AddUser,
-    getUserInfo
+    getUserInfo,
+    DeleteFile
 };
