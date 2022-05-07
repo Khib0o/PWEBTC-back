@@ -10,7 +10,8 @@ const pool = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "ynot6803",
-    database: "pmanager"
+    database: "pmanager",
+    multipleStatements:true
 });
 
 function getAllFiles(limit = 100) {
@@ -104,12 +105,12 @@ function getUserInfo(req) {
 }
 function DeleteFile(req) {
     return new Promise((resolve, reject) => {
-        const sql = `Delete from files where IdFile = ${req.body.fileid}`;
-        console.log(sql);
+        const sql = `Delete from files where IdFile = ${req.body.fileid};`;
+        //const sql = `Select FilePath from files where IdFile = ${req.body.fileid};Delete from files where IdFile = ${req.body.fileid};`;
         pool.query(sql, function (err, results) {
             if (err) {
                 return reject(err);
-            }
+            }            
             return resolve(results);
         });
     });
