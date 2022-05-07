@@ -187,7 +187,7 @@ function getMembersOfProject(req){
 
 
 
-}
+
 function DeleteFile(req) {
     return new Promise((resolve, reject) => {
         const sql = `Delete from files where IdFile = ${req.body.fileid};`;
