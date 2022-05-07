@@ -110,5 +110,20 @@ app.post('/api/getMembersOfProject', (req,res,next) => {
 })
 
 
+app.post('/api/deletefiles', (req,res,next) => {
+    db.DeleteFile(req)
+    .then(data => {        
+        /*if(data[0][0].FilePath)
+        {
+            var fs = require('fs');
+            var path = '.\\'+data[0][0].FilePath;
+            fs.unlink(path, (err) => {
+                if (err) throw err
+            });
+        }*/
+        res.status(200).json(data);
+      })
+    .catch(err => res.status(500).json(err)); 
+})
 
 app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));

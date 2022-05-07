@@ -10,7 +10,8 @@ const pool = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "ynot6803",
-    database: "pmanager"
+    database: "pmanager",
+    multipleStatements:true
 });
 
 
@@ -119,7 +120,22 @@ function getProjetByUser(req) {
             return resolve(results);
         });
     });
-
+}
+    
+function getUserInfo(req) {
+    let token = req.headers.authorization.slice(0,400);
+    console.log("");
+    console.log(token);
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT * FROM users WHERE token = '${token}' ` ;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log(results);
+            return resolve(results);
+        });
+    });
 }
 
 function addUserToProject(req){
@@ -171,6 +187,19 @@ function getMembersOfProject(req){
 
 
 
+}
+function DeleteFile(req) {
+    return new Promise((resolve, reject) => {
+        const sql = `Delete from files where IdFile = ${req.body.fileid};`;
+        //const sql = `Select FilePath from files where IdFile = ${req.body.fileid};Delete from files where IdFile = ${req.body.fileid};`;
+        pool.query(sql, function (err, results) {
+            if (err) {
+                return reject(err);
+            }            
+            return resolve(results);
+        });
+    });
+}
 
 // Export the functions so other modules/files can use them
 module.exports = {
@@ -184,5 +213,6 @@ module.exports = {
     addUserToProject,
     removeUserToProject,
     getMembersOfProject,
-    pool
+    pool,
+    DeleteFile
 };
