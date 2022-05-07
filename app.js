@@ -78,9 +78,18 @@ app.get('/api/getUser', (req,res,next) => {
         .catch(err => res.status(500).json(err));
 })
 app.post('/api/deletefiles', (req,res,next) => {
-    console.log(req.body);
     db.DeleteFile(req)
-    .then(data => res.status(200).json(data))
+    .then(data => {        
+        /*if(data[0][0].FilePath)
+        {
+            var fs = require('fs');
+            var path = '.\\'+data[0][0].FilePath;
+            fs.unlink(path, (err) => {
+                if (err) throw err
+            });
+        }*/
+        res.status(200).json(data);
+      })
     .catch(err => res.status(500).json(err)); 
 })
 
