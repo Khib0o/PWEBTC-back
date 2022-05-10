@@ -19,7 +19,7 @@ const pool = mysql.createPool({
 
 function getAllFiles(limit = 100) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM files`;
+        const sql = `SELECT * FROM images`;
         pool.query(sql, [limit], function (err, results, fields) {
             if (err) {
                 return reject(err);
@@ -190,7 +190,7 @@ function getMembersOfProject(req){
 
 function DeleteFile(req) {
     return new Promise((resolve, reject) => {
-        const sql = `Delete from files where IdFile = ${req.body.fileid};`;
+        const sql = `Delete from images where id = ${req.body.fileid};`;
         //const sql = `Select FilePath from files where IdFile = ${req.body.fileid};Delete from files where IdFile = ${req.body.fileid};`;
         pool.query(sql, function (err, results) {
             if (err) {

@@ -31,8 +31,27 @@ app.use((req, res, next) => {
 // Routes //
 ////////////
 
+/*const file = "" ;
+app.post('/api/download', function(req, res,next){
+    console.log("download");
+    console.log(req.body.name);
+    file == `${__dirname}/uploads/${req.body.name}`
+
+    console.log("done");
+    //res.json({reponse :'DOWNLOADED'});
+    next()
+  });*/
+
+  app.get('/api/download/:filename', function(req, res){
+    const file = `${__dirname}/uploads/`+req.params.filename;
+    res.download(file); // Set disposition and send it.
+  });
+
+
+
 app.post('/api/upload', multipartMiddleware, (req, res) => {
     console.log(req.body);
+    console.log(__dirname);  
     db.insertPath(req)
     .then(data => res.json(data))
     .catch(err => res.status(500).json(err));
