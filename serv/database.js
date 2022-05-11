@@ -19,7 +19,7 @@ const pool = mysql.createPool({
 
 function getAllFiles(limit = 100) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM files`;
+        const sql = `SELECT * FROM images`;
         pool.query(sql, [limit], function (err, results, fields) {
             if (err) {
                 return reject(err);
@@ -111,7 +111,7 @@ function getProjetByUser(req) {
     console.log(token);
 
     return new Promise((resolve, reject) => {
-        var sql = `SELECT projects.IdProjects, projects.Name, projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser HAVING (SELECT IdUser FROM users WHERE users.token = '${token}')` ;
+        var sql = `SELECT projects.IdProjects, projects.Name, projects.IdOwner FROM associationproject, users, projects WHERE associationproject.IdUser=users.idUser AND associationproject.IdProjects=projects.IdProjects AND users.token='${token}'` ;
         pool.query(sql ,function (err, results) {
             if (err) {
                 return reject(err);
