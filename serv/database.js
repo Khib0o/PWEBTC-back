@@ -17,10 +17,11 @@ const pool = mysql.createPool({
 
 
 
-function getAllFiles(limit = 100) {
+function getAllFiles(req) {
+    let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM images`;
-        pool.query(sql, [limit], function (err, results, fields) {
+        const sql = `SELECT images.* FROM images, users WHERE images.IdOwner = users.IdUser AND users.token = '${token}'`;
+        pool.query(sql, function (err, results, fields) {
             if (err) {
                 return reject(err);
             }
@@ -76,10 +77,11 @@ function AddUser(req) {
 
 
 function insertPath(req){
+    let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO images (path, name)VALUES(?, ?)`;
+        var sql = `INSERT INTO images (path, NAME, IdOwner) SELECT "${req.path}", "${req.body.name}" , users.IdUser FROM users WHERE token = '${token}'`;
         console.log("insertion done");
-        pool.query(sql, [req.path, req.body.name],function (err, results) {
+        pool.query(sql, function (err, results) {
             if (err) {
                 return reject(err);
             }
@@ -190,7 +192,7 @@ function getMembersOfProject(req){
 
 function DeleteFile(req) {
     return new Promise((resolve, reject) => {
-        const sql = `Delete from files where IdFile = ${req.body.fileid};`;
+        const sql = `DELETE FROM images WHERE images.id = ${req.body.fileid};`;
         //const sql = `Select FilePath from files where IdFile = ${req.body.fileid};Delete from files where IdFile = ${req.body.fileid};`;
         pool.query(sql, function (err, results) {
             if (err) {
