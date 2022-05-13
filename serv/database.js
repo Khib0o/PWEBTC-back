@@ -14,9 +14,6 @@ const pool = mysql.createPool({
     multipleStatements:true
 });
 
-
-
-
 function getAllFiles(req) {
     let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
@@ -28,6 +25,42 @@ function getAllFiles(req) {
 
             return resolve(results);
         });
+    });
+}
+
+function createNewProject(req) {
+    return new Promise((resolve, reject) => {
+
+        console.log(req.body)
+
+        const sql = `INSERT INTO projects (Name, IdOwner) SELECT '${req.body.name}', IdUser from users where token='${req.body.tokenOwner.slice(0,400)}';`;
+        pool.query(sql, function(err, results) {
+            if(err){
+                console.log(err);
+            }
+            console.log("Creation projet ok");
+
+            sql1 = `SELECT IdProjects FROM projects WHERE Name='${req.body.name}';`;
+            console.log("Recuperation");
+
+            pool.query(sql1, function(err, results) {
+                if(err){
+                    console.log(err);
+                }
+                sql2 = ''
+                for (const elem of req.body.users.split(",")){
+                    sql2 += `INSERT INTO associationproject (IdProjects, IdUser) SELECT ${results[0].IdProjects}, IdUser FROM users WHERE email='${elem}';`
+                    console.log(elem);
+                }
+                pool.query(sql2, function (err, results) {
+                    if (err) {
+                        return reject(err);
+                    }            
+                    return resolve(results);
+                });
+            });
+        });
+        
     });
 }
 
@@ -216,5 +249,6 @@ module.exports = {
     removeUserToProject,
     getMembersOfProject,
     pool,
-    DeleteFile
+    DeleteFile,
+    createNewProject
 };
