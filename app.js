@@ -31,13 +31,46 @@ app.use((req, res, next) => {
 // Routes //
 ////////////
 
+/*const file = "" ;
+app.post('/api/download', function(req, res,next){
+    console.log("download");
+    console.log(req.body.name);
+    file == `${__dirname}/uploads/${req.body.name}`
+
+    console.log("done");
+    //res.json({reponse :'DOWNLOADED'});
+    next()
+  });*/
+
+  app.get('/api/download/:filename', function(req, res){
+    const file = `${__dirname}/uploads/`+req.params.filename;
+    res.download(file); // Set disposition and send it.
+  });
+
+
+var fs = require('fs');
 app.post('/api/upload', multipartMiddleware, (req, res) => {
-    console.log(req.body);
+    console.log(req.files.file);
+    console.log(req.files.file.path);
+    console.log(`${__dirname}/uploads/`+replace(req.files.file.path));
     db.insertPath(req)
     .then(data => res.json(data))
     .catch(err => res.status(500).json(err));
+    fs.rename(`${__dirname}/uploads/`+replace(req.files.file.path),`${__dirname}/uploads/`+req.body.name, (error) => {
+        if (error) {
+            console.log(error);
+          }
+          else {
+            console.log("\nFile Renamed\n");
+          }
+    });
 });
 
+function replace(str){
+    res = str.replace('uploads\\','');
+    return res;
+
+}
 
 // The home page lists some available URLs.
 app.get("/", (req, res) => {
