@@ -109,6 +109,13 @@ app.post('/api/getMembersOfProject', (req,res,next) => {
         .catch(err => res.status(500).json(err));
 })
 
+app.post('/api/createNewProject', (req,res,next) => {
+    console.log("Demande create recue");
+    db.createNewProject(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+})
+
 
 app.post('/api/deletefiles', (req,res,next) => {
     db.DeleteFile(req)
