@@ -9,23 +9,58 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "123456",
-    database: "pmanager"
+    password: "ynot6803",
+    database: "pmanager",
+    multipleStatements:true
 });
 
-
-
-
-function getAllFiles(limit = 100) {
+function getAllFiles(req) {
+    let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM files`;
-        pool.query(sql, [limit], function (err, results, fields) {
+        const sql = `SELECT images.* FROM images, users WHERE images.IdOwner = users.IdUser AND users.token = '${token}'`;
+        pool.query(sql, function (err, results, fields) {
             if (err) {
                 return reject(err);
             }
 
             return resolve(results);
         });
+    });
+}
+
+function createNewProject(req) {
+    return new Promise((resolve, reject) => {
+
+        console.log(req.body)
+
+        const sql = `INSERT INTO projects (Name, IdOwner) SELECT '${req.body.name}', IdUser from users where token='${req.body.tokenOwner.slice(0,400)}';`;
+        pool.query(sql, function(err, results) {
+            if(err){
+                console.log(err);
+            }
+            console.log("Creation projet ok");
+
+            sql1 = `SELECT IdProjects FROM projects WHERE Name='${req.body.name}';`;
+            console.log("Recuperation");
+
+            pool.query(sql1, function(err, results) {
+                if(err){
+                    console.log(err);
+                }
+                sql2 = ''
+                for (const elem of req.body.users.split(",")){
+                    sql2 += `INSERT INTO associationproject (IdProjects, IdUser) SELECT ${results[0].IdProjects}, IdUser FROM users WHERE email='${elem}';`
+                    console.log(elem);
+                }
+                pool.query(sql2, function (err, results) {
+                    if (err) {
+                        return reject(err);
+                    }            
+                    return resolve(results);
+                });
+            });
+        });
+        
     });
 }
 
@@ -75,10 +110,11 @@ function AddUser(req) {
 
 
 function insertPath(req){
+    let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO images (path, name)VALUES(?, ?)`;
+        var sql = `INSERT INTO images (path, NAME, IdOwner) SELECT "${req.path}", "${req.body.name}" , users.IdUser FROM users WHERE token = '${token}'`;
         console.log("insertion done");
-        pool.query(sql, [req.path, req.body.name],function (err, results) {
+        pool.query(sql, function (err, results) {
             if (err) {
                 return reject(err);
             }
@@ -110,7 +146,7 @@ function getProjetByUser(req) {
     console.log(token);
 
     return new Promise((resolve, reject) => {
-        var sql = `SELECT projects.IdProjects, projects.Name, projects.Members, projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser HAVING (SELECT IdUser FROM users WHERE users.token = '${token}')` ;
+        var sql = `SELECT projects.IdProjects, projects.Name, projects.IdOwner FROM associationproject, users, projects WHERE associationproject.IdUser=users.idUser AND associationproject.IdProjects=projects.IdProjects AND users.token='${token}'` ;
         pool.query(sql ,function (err, results) {
             if (err) {
                 return reject(err);
@@ -119,11 +155,86 @@ function getProjetByUser(req) {
             return resolve(results);
         });
     });
+}
+    
+function getUserInfo(req) {
+    let token = req.headers.authorization.slice(0,400);
+    console.log("");
+    console.log(token);
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT * FROM users WHERE token = '${token}' ` ;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log(results);
+            return resolve(results);
+        });
+    });
+}
 
+function addUserToProject(req){
+    let email = req.body.email;
+    let IdProjects = req.body.IdProjects;
+
+    return new Promise((resolve, reject) => {
+        var sql = `INSERT INTO associationproject (IdProjects, IdUser) SELECT ${IdProjects}, users.IdUser FROM users WHERE email = '${email}'`;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
+}
+
+function removeUserToProject(req) {
+    let email = req.body.email;
+    let IdProjects = req.body.IdProjects;
+
+    return new Promise((resolve, reject) => {
+        var sql = `DELETE FROM associationproject WHERE IdProjects = ${IdProjects} AND IdUser IN (SELECT IdUser FROM users WHERE users.email = '${email}')`;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
+}
+
+function getMembersOfProject(req){
+    let IdProjects = req.body.IdProjects;
+
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT users.email FROM users, associationproject WHERE associationproject.IdProjects = ${IdProjects} AND users.IdUser = associationproject.IdUser `;
+        pool.query(sql ,function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        });
+        
+    });
 }
 
 
 
+
+function DeleteFile(req) {
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM images WHERE images.id = ${req.body.fileid};`;
+        //const sql = `Select FilePath from files where IdFile = ${req.body.fileid};Delete from files where IdFile = ${req.body.fileid};`;
+        pool.query(sql, function (err, results) {
+            if (err) {
+                return reject(err);
+            }            
+            return resolve(results);
+        });
+    });
+}
 
 // Export the functions so other modules/files can use them
 module.exports = {
@@ -134,5 +245,10 @@ module.exports = {
     getUserInfo,
     getProjetByUser,
     insertPath,
-    pool
+    addUserToProject,
+    removeUserToProject,
+    getMembersOfProject,
+    pool,
+    DeleteFile,
+    createNewProject
 };
