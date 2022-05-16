@@ -50,9 +50,9 @@ app.post('/api/download', function(req, res,next){
 
 var fs = require('fs');
 app.post('/api/upload', multipartMiddleware, (req, res) => {
-    console.log(req.files.file);
-    console.log(req.files.file.path);
-    console.log(`${__dirname}/uploads/`+replace(req.files.file.path));
+    //console.log(req.files.file);
+    //console.log(req.files.file.path);
+    //console.log(`${__dirname}/uploads/`+replace(req.files.file.path));
     db.insertPath(req)
     .then(data => res.json(data))
     .catch(err => res.status(500).json(err));
@@ -84,7 +84,8 @@ app.get("/", (req, res) => {
 });
 
 //Get all files
-app.get("/api/files", (req, res) => {
+app.post("/api/files", (req, res) => {
+    console.log(req.body);  
     db.getAllFiles(req)
         .then(data => res.json(data))
         .catch(err => res.status(500).json(err));

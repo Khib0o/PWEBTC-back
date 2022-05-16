@@ -15,17 +15,35 @@ const pool = mysql.createPool({
 });
 
 function getAllFiles(req) {
-    let token = req.headers.authorization.slice(0,400);
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT images.* FROM images, users WHERE images.IdOwner = users.IdUser AND users.token = '${token}'`;
-        pool.query(sql, function (err, results, fields) {
-            if (err) {
-                return reject(err);
-            }
+    
+    let IdProjects = req.body.selectedProjectId;
 
-            return resolve(results);
+    if(IdProjects == 0) {
+        let token = req.headers.authorization.slice(0,400);
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT images.* FROM images, users WHERE images.IdOwner = users.IdUser AND users.token = '${token}' AND images.IdProjects IS NULL`;
+            pool.query(sql, function (err, results, fields) {
+                if (err) {
+                    return reject(err);
+                }
+    
+                return resolve(results);
+            });
         });
-    });
+    } else {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT images.* FROM images, users WHERE images.IdProjects = '${IdProjects}'`;
+            pool.query(sql, function (err, results, fields) {
+                if (err) {
+                    return reject(err);
+                }
+    
+                return resolve(results);
+            });
+        });
+    }
+
+    
 }
 
 function createNewProject(req) {
@@ -112,7 +130,7 @@ function AddUser(req) {
 function insertPath(req){
     let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
-        var sql = `INSERT INTO images (path, NAME, IdOwner) SELECT "${req.path}", "${req.body.name}" , users.IdUser FROM users WHERE token = '${token}'`;
+        var sql = `INSERT INTO images (path, NAME, IdProjects, IdOwner) SELECT "${req.path}", "${req.body.name}", "${req.body.IdProjects}" , users.IdUser FROM users WHERE token = '${token}'`;
         console.log("insertion done");
         pool.query(sql, function (err, results) {
             if (err) {
