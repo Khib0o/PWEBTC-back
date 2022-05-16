@@ -90,6 +90,13 @@ app.get("/api/files", (req, res) => {
         .catch(err => res.status(500).json(err));
 });
 
+app.post('/api/createNewProject', (req,res,next) => {
+    console.log("Demande create recue");
+    db.createNewProject(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+})
+
 //Get all users
 app.get("/api/users", (req, res) => {
     console.log(req);
