@@ -9,7 +9,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "123456",
+    password: "ynot6803",
     database: "pmanager",
     multipleStatements:true
 });
@@ -21,7 +21,7 @@ function getAllFiles(req) {
     if(IdProjects == 0) {
         let token = req.headers.authorization.slice(0,400);
         return new Promise((resolve, reject) => {
-            const sql = `SELECT images.* FROM images, users WHERE images.IdOwner = users.IdUser AND users.token = '${token}' AND images.IdProjects IS NULL`;
+            const sql = `SELECT images.* FROM images, users WHERE images.IdOwner = users.IdUser AND users.token = '${token}' AND images.IdProjects ='0'`;
             pool.query(sql, function (err, results, fields) {
                 if (err) {
                     return reject(err);
