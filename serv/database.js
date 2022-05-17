@@ -103,7 +103,7 @@ function AddFile(limit = 100) {
                     UPDATE files SET File=`+toString(new File("test.txt"))` WHERE IdFile=1;`;
         pool.query(sql, [limit], function (err, results, fields) {
             if (err) {
-                return reject(err);
+                return reject(err); 
             }
 
             return resolve(results);
