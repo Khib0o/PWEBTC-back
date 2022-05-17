@@ -9,7 +9,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "ynot6803",
+    password: "123456",
     database: "pmanager",
     multipleStatements:true
 });
@@ -254,6 +254,25 @@ function DeleteFile(req) {
     });
 }
 
+
+function SendContactInfo(req) {
+    let email = req.body.email;
+    let title = req.body.title;
+    let description = req.body.description;
+    return new Promise((resolve, reject) => {
+        const sql = `INSERT INTO contactInfo (email, titre, description) VALUES ("${email}", "${title}", "${description}")`;
+        //const sql = `Select FilePath from files where IdFile = ${req.body.fileid};Delete from files where IdFile = ${req.body.fileid};`;
+        pool.query(sql, function (err, results) {
+            if (err) {
+                return reject(err);
+            }            
+            return resolve(results);
+        });
+    });
+}
+
+
+
 // Export the functions so other modules/files can use them
 module.exports = {
     getAllFiles,
@@ -268,5 +287,6 @@ module.exports = {
     getMembersOfProject,
     pool,
     DeleteFile,
-    createNewProject
+    createNewProject,
+    SendContactInfo
 };
