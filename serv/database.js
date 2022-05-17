@@ -32,7 +32,7 @@ function getAllFiles(req) {
         });
     } else {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT images.* FROM images, users WHERE images.IdProjects = '${IdProjects}'`;
+            const sql = `SELECT images.* FROM images WHERE images.IdProjects = '${IdProjects}'`;
             pool.query(sql, function (err, results, fields) {
                 if (err) {
                     return reject(err);
