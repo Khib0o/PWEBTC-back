@@ -271,6 +271,20 @@ function SendContactInfo(req) {
     });
 }
 
+function getLatestProjectByUser(req) {
+    let token = req.headers.authorization.slice(0,400);
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT MAX(IdProjects) AS IdProjects, projects.Name , projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser AND users.token = '${token}'`;
+        pool.query(sql, function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log('getLatestProjectByUser: ',results)            
+            return resolve(results);
+        });
+    });
+}
+
 
 
 // Export the functions so other modules/files can use them
@@ -288,5 +302,6 @@ module.exports = {
     pool,
     DeleteFile,
     createNewProject,
-    SendContactInfo
+    SendContactInfo,
+    getLatestProjectByUser
 };

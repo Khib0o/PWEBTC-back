@@ -174,5 +174,11 @@ app.post('/api/sendContactInfo', (req,res,next) => {
         .catch(err => res.status(500).json(err));
 });
 
+app.get('/api/getLatestProjectByUser', (req,res,next) => {
+    db.getLatestProjectByUser(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+})
+
 
 app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));
