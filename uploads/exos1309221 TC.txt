@@ -1,0 +1,5 @@
+1) entiers codables sur N octets
+2) Les lister
+3) combien d'octets (et de bits) pour représenter 16756
+4)Représenter 27, 7.25, -9
+5) calculer 1011+0101
