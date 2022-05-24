@@ -9,7 +9,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "3151699a46",
+    password: "ynot6803",
     database: "pmanager",
     multipleStatements:true
 });
@@ -274,7 +274,7 @@ function SendContactInfo(req) {
 function getLatestProjectByUser(req) {
     let token = req.headers.authorization.slice(0,400);
     return new Promise((resolve, reject) => {
-        const sql = `SELECT MAX(IdProjects) AS IdProjects, projects.Name , projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser AND users.token = '${token}'`;
+        const sql = `SELECT MAX(IdProjects) AS IdProjects, projects.Name , projects.IdOwner FROM projects, users WHERE projects.IdOwner = users.IdUser AND users.token = '${token}' GROUP BY projects.IdProjects ORDER BY projects.IdProjects DESC LIMIT 1`;
         pool.query(sql, function (err, results) {
             if (err) {
                 return reject(err);
