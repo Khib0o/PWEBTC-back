@@ -180,5 +180,11 @@ app.get('/api/getLatestProjectByUser', (req,res,next) => {
         .catch(err => res.status(500).json(err));
 })
 
+app.get('/api/getAllFilesProject', (req,res,next) => {
+    db.getAllFilesProject(req)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err));
+})
+
 
 app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));

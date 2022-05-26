@@ -285,6 +285,20 @@ function getLatestProjectByUser(req) {
     });
 }
 
+function getAllFilesProject(req) {
+    let token = req.headers.authorization.slice(0,400);
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT images.id ,images.name, projects.Name, projects.IdProjects FROM users, images INNER JOIN projects ON images.IdProjects = projects.IdProjects WHERE images.IdOwner = users.IdUser AND users.token = '${token}'`;
+        pool.query(sql, function (err, results) {
+            if (err) {
+                return reject(err);
+            }
+            console.log('getAllFilesProject: ',results)            
+            return resolve(results);
+        });
+    });
+}
+
 
 
 // Export the functions so other modules/files can use them
@@ -303,5 +317,6 @@ module.exports = {
     DeleteFile,
     createNewProject,
     SendContactInfo,
-    getLatestProjectByUser
+    getLatestProjectByUser,
+    getAllFilesProject
 };
