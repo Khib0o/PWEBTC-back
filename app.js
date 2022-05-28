@@ -5,7 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const db = require("./serv/database");
-const PORT = 3000;
+const PORT = process.env.PORT || 8000;
 
 app.use(express.urlencoded({ extended: true }));
 global.__basedir = __dirname;
